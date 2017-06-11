@@ -1,0 +1,80 @@
+/* OVERALL */
+body {
+  font-family: Roboto, Arial, sans-serif;
+}
+
+/* PAGE LAYOUT */
+#content {
+  display: flex;
+}
+
+#map {
+  height: 85vh;
+  width: 35vw;
+  min-width: 500px;
+}
+
+#offers {
+  flex: 1;
+  height: 85vh;
+  overflow: scroll;
+  margin-right: 10px;
+}
+
+/* OFFER LIST */
+.offer {
+  padding: 10px;
+  border-bottom: 1px solid black;
+}
+
+/* zebra stripes
+.offer:nth-child(even) {
+  background-color: #ccc;
+}
+*/
+
+.offer:hover {
+  background-color: #ccc;
+}
+
+/* EACH OFFER */
+.offer h3 {
+  padding: 0;
+  margin: 0;
+  font-size: 12pt;
+}
+
+.offer h3 a {
+  color: black;
+  text-decoration: none;
+}
+
+.offer .inhabitants:after,
+.offer .costs:after,
+.offer .size:after {
+  content: " • ";
+}
+
+.offer .street {
+  font-weight: bold;
+  padding-right: 10px;
+}
+.street:before {
+  content: "\a";
+  white-space: pre
+}
+
+.offer .distances {
+  font-style: italic;
+  padding-right: 10px;
+}
+.offer .distances:before {
+  content: "(";
+}
+.offer .distances:after {
+  content: ")";
+}
+
+.offer .onlinesince {
+  color: #999;
+}

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <meta name="author" content="Christoph Friedrich">
+  <title>usable-wg-gesucht</title>
+  <!-- jQuery for painless ajaxing and eventing -->
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+  <!-- Leaflet stuff -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+  <!-- own stuff -->
+  <link rel="stylesheet" href="style.css" />
+  <script src="wggesucht.js"></script>
+  <script src="app.js"></script>
+</head>
+<body>
+  <h1>usable-wg-gesucht</h1>
+  <button onclick="crawl()">Crawl</button>
+  <div id="content">
+    <div id="offers"></div>
+    <div id="map"></div>
+  </div>
+</body>
+</html>
