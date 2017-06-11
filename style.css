@@ -21,6 +21,10 @@ body {
   margin-right: 10px;
 }
 
+button {
+  float: right;
+}
+
 /* OFFER LIST */
 .offer {
   padding: 10px;
@@ -47,6 +51,14 @@ body {
 .offer h3 a {
   color: black;
   text-decoration: none;
+}
+
+.offer .tags {
+  float: right;
+}
+
+.offer .tags span {
+  cursor: pointer;
 }
 
 .offer .inhabitants:after,
@@ -78,3 +90,13 @@ body {
 .offer .onlinesince {
   color: #999;
 }
+
+.offer .tags .tags-read.false:after { content: "🆕"; }
+.offer .tags .tags-read.true:after { content: "👁"; }
+.offer .tags .tags-interesting.undefined.false:after { content: "🤔"; }
+.offer .tags .tags-interesting.false:after { content: "😐"; }
+.offer .tags .tags-interesting.true:after { content: "👍"; }
+.offer .tags .tags-contacted.false:after { content: "📝"; }
+.offer .tags .tags-contacted.true:after { content: "✉️"; }
+.offer .tags .tags-invited.false:after { content: "❓"; }
+.offer .tags .tags-invited.true:after { content: "👍"; }

@@ -36,10 +36,18 @@ function databaseContains(offer) {
 
 function addOfferToDatabase(offer) {
   if(!databaseContains(offer)) {
-    if(offer.tags == undefined) offer.tags = {};
+    if(offer.tags == undefined) offer.tags = {read: false, interesting: undefined, contacted: false, invited: false};
     offers.push(offer);
     save();
   }
+}
+
+function toggleTag(type, offerid, visualizationElement) {
+  offers.find((o)=>o.offer_id==offerid).tags[type] = (! offers.find((o)=>o.offer_id==offerid).tags[type]) || false;
+  visualizationElement.classList.toggle("true");
+  visualizationElement.classList.toggle("false");
+  if(type=='interesting' && visualizationElement.classList.contains('undefined')) visualizationElement.classList.remove('undefined');
+  save();
 }
 
 // GUI
@@ -50,6 +58,12 @@ function addOfferToGui(offer) {
   // define template
   var template ="\
   <div class='offer' onmouseenter='$ONMOUSEENTER$' onmouseleave='$ONMOUSELEAVE$'>\
+    <div class='tags'>\
+      <span class='tags-read $TAGS_READ$' onclick='toggleTag(\"read\", \"$OFFER_ID$\", this)'></span>\
+      <span class='tags-interesting $TAGS_INTERESTING$' onclick='toggleTag(\"interesting\", \"$OFFER_ID$\", this)'></span>\
+      <span class='tags-contacted $TAGS_CONTACTED$' onclick='toggleTag(\"contacted\", \"$OFFER_ID$\", this)'></span>\
+      <span class='tags-invited $TAGS_INVITED$' onclick='toggleTag(\"invited\", \"$OFFER_ID$\", this)'></span>\
+    </div>\
     <h3><a href='http://www.wg-gesucht.de/$OFFER_ID$.html'>$OFFER_TITLE$</a></h3>\
     <span class='inhabitants'>$FLATSHARE_INHABITANTS_TOTAL$er-WG $FLATSHARE_INHABITANTS_VISUAL$\</span>\
     <span class='costs'>$TOTAL_COSTS$&nbsp;€ $TOTAL_COSTS_VISUAL$</span>\
@@ -61,11 +75,11 @@ function addOfferToGui(offer) {
   </div>";
   
   // fill out placeholders that are directly part of the offer object
-  Object.keys(offer).forEach((e) => template = template.replace('$'+e.toUpperCase()+'$', offer[e]));
+  Object.keys(offer).forEach((e) => template = template.replace(new RegExp('\\$'+e.toUpperCase()+'\\$', 'g'), offer[e]));
   
   // fill out custom placeholders with computed values
   var placeholders = [];
-  placeholders.push({key: "ONMOUSEENTER", value: "offermarkers[\"" + offer.offer_id + "\"]._icon.src=\"marker-orange.svg\"; showRadius(" + offer.geo_latitude + "," + offer.geo_longitude + ");"});
+  placeholders.push({key: "ONMOUSEENTER", value: "offermarkers[\"" + offer.offer_id + "\"]._icon.src=\"marker-orange.svg\"; showRadius(" + offer.geo_latitude + "," + offer.geo_longitude + "); map.panTo([" + offer.geo_latitude + "," + offer.geo_longitude + "])"});
   placeholders.push({key: "ONMOUSELEAVE", value: "offermarkers[\"" + offer.offer_id + "\"]._icon.src=\"marker-blue.svg\""});
   placeholders.push({key: "FLATSHARE_INHABITANTS_VISUAL", value: (new Array(parseInt(offer.flatshare_males))).fill("👔").join('') + (new Array(parseInt(offer.flatshare_females))).fill("👚").join('') + (new Array(offer.flatshare_inhabitants_total-offer.flatshare_males-offer.flatshare_females)).fill("👨").join('')});
   placeholders.push({key: "TOTAL_COSTS_VISUAL", value: "💸".repeat(offer.total_costs/100)});
@@ -73,7 +87,15 @@ function addOfferToGui(offer) {
   placeholders.push({key: "AVAILABLE_FROM_DATE_FORMATTED", value: (new Date(offer.available_from_date*1000)).toLocaleDateString()});
   placeholders.push({key: "AVAILABLE_FROM_DATE_VISUAL", value: (((new Date(offer.available_from_date*1000) - new Date()) / (60*60*24*1000)) < 30 ? "🔜" : "")});
   placeholders.push({key: "DISTANCES", value: config.landmarks.map((e)=>e.title+': ' + Math.floor(offermarkers[offer.offer_id].getLatLng().distanceTo([e.lat, e.lon]))+'m').join(', ')});
-  placeholders.forEach((e) => template = template.replace('$'+e.key+'$', e.value));
+  /*placeholders.push({key: "TAGS_READ", value: (offer.tags.read ? "👁" : "🆕")});
+  placeholders.push({key: "TAGS_INTERESTING", value: (offer.tags.interesting == null ? "🤔" : offer.tags.interesting ? "👍" : "😐")});
+  placeholders.push({key: "TAGS_CONTACTED", value: (offer.tags.contacted ? "✉️" : "📝")});
+  placeholders.push({key: "TAGS_INVITED", value: (offer.tags.invited ? "👍" : "❓")});*/
+  placeholders.push({key: "TAGS_READ", value: offer.tags.read});
+  placeholders.push({key: "TAGS_INTERESTING", value: (offer.tags.interesting == null ? "undefined false" : offer.tags.interesting)});
+  placeholders.push({key: "TAGS_CONTACTED", value: offer.tags.contacted});
+  placeholders.push({key: "TAGS_INVITED", value: offer.tags.invited});
+  placeholders.forEach((e) => template = template.replace(new RegExp('\\$'+e.key+'\\$', 'g'), e.value));
   
   // add filled out template to offers section
   document.getElementById('offers').innerHTML += template;
@@ -111,7 +133,8 @@ function showOffersFromDatabase() {
 function crawl() {
   // set filtering criteria
   var filters = {
-    // note that setting radAdd without setting lat/lng will cause NO filtering!
+    // note that setting radAdd or lat/lng without the other will cause NO filtering!
+    radAdd: "Beispielstraße 1, 12345 Musterstadt",
     radLat: config.search.lat,
     radLng: config.search.lon,
     radDis: config.search.radius  // distance in meters
@@ -120,6 +143,7 @@ function crawl() {
     var countbefore = offers.length;
     response._embedded.offers.forEach(addOfferToDatabase);
     alert('Done crawling! Added ' + (offers.length-countbefore) + ' new offers to the database.');
+    showOffersFromDatabase();
   });
 }
 
