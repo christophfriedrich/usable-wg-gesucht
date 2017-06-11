@@ -17,3 +17,7 @@ function search(cityid, filters, callback, page) {
   // do request
   $.get(BASEURL + '/asset/offers?city_id=' + cityid + '&' + filterstring + '&page=' + page, callback);
 }
+
+function getDetails(offerid, callback) {
+  $.get(BASEURL + '/offers/' + offerid, callback);
+}

@@ -21,6 +21,21 @@ body {
   margin-right: 10px;
 }
 
+#details {
+  height: 85vh;
+  overflow: scroll;
+  display: none;
+}
+
+#content.detailsmode #map,
+#content.detailsmode #offers {
+  display: none;
+}
+
+#content.detailsmode #details {
+  display: block;
+}
+
 button {
   float: right;
 }
@@ -51,6 +66,10 @@ button {
 .offer h3 a {
   color: black;
   text-decoration: none;
+}
+
+.offer h3 span {
+  cursor: pointer;
 }
 
 .offer .tags {
@@ -95,8 +114,12 @@ button {
 .offer .tags .tags-read.true:after { content: "👁"; }
 .offer .tags .tags-interesting.undefined.false:after { content: "🤔"; }
 .offer .tags .tags-interesting.false:after { content: "😐"; }
-.offer .tags .tags-interesting.true:after { content: "👍"; }
+.offer .tags .tags-interesting.true:after { content: "😍"; }
 .offer .tags .tags-contacted.false:after { content: "📝"; }
 .offer .tags .tags-contacted.true:after { content: "✉️"; }
 .offer .tags .tags-invited.false:after { content: "❓"; }
 .offer .tags .tags-invited.true:after { content: "👍"; }
+
+#details .freetexts {
+  column-count: 2;
+}

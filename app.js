@@ -64,7 +64,7 @@ function addOfferToGui(offer) {
       <span class='tags-contacted $TAGS_CONTACTED$' onclick='toggleTag(\"contacted\", \"$OFFER_ID$\", this)'></span>\
       <span class='tags-invited $TAGS_INVITED$' onclick='toggleTag(\"invited\", \"$OFFER_ID$\", this)'></span>\
     </div>\
-    <h3><a href='http://www.wg-gesucht.de/$OFFER_ID$.html'>$OFFER_TITLE$</a></h3>\
+    <h3><a href='http://www.wg-gesucht.de/$OFFER_ID$.html'>➡️</a> <span onclick='showDetails(\"$OFFER_ID$\", this)'>$OFFER_TITLE$</span></h3>\
     <span class='inhabitants'>$FLATSHARE_INHABITANTS_TOTAL$er-WG $FLATSHARE_INHABITANTS_VISUAL$\</span>\
     <span class='costs'>$TOTAL_COSTS$&nbsp;€ $TOTAL_COSTS_VISUAL$</span>\
     <span class='size'>$PROPERTY_SIZE$&nbsp;m² $PROPERTY_SIZE_VISUAL$</span>\
@@ -127,6 +127,26 @@ function showOffersFromDatabase() {
   load();
   if(offers.length == 0) alert('The database is empty! Click "crawl" to fill it for the first time.');
   offers.forEach(addOfferToGui);
+}
+
+function showDetails(offerid, caller) {
+  getDetails(offerid, function(response) {
+    document.getElementById('content').classList.add('detailsmode');
+    document.getElementById('details').innerHTML =
+      // normal offer div as header
+      caller.parentElement.parentElement.outerHTML +
+      // back button
+      "<button onclick='document.getElementById(\"content\").classList.remove(\"detailsmode\")'>back</button>" +
+      // freetext fields
+      "<div class='freetexts'>" +
+      "  <h4>Zimmer</h4>   <p>" + response.freetext_property_description + "</p>" +
+      "  <h4>Lage</h4>     <p>" + response.freetext_area_description + "</p>" +
+      "  <h4>WG-Leben</h4> <p>" + response.freetext_flatshare + "</p>" +
+      "  <h4>Sonstiges</h4><p>" + response.freetext_other + "</p>" +
+      "</div>" +
+      // the rest (presentation tbd)
+      "<pre>" + JSON.stringify(response).replace(/","/g, "\",\n\"") + "</pre>";
+  });
 }
 
 // Retrieving data
